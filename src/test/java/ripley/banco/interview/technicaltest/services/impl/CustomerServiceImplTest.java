@@ -70,13 +70,13 @@ public class CustomerServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"17345962A", "23556478!", "5131097c", "16018409*"})
-    public void findCustomer_shouldThrowControlCharacterContainForbiddenCharactersException(String rut) {
+    public void findCustomer_shouldThrowForbiddenCheckCharacterException(String rut) {
 
         ForbiddenCheckCharacterException exception = assertThrows(ForbiddenCheckCharacterException.class, () -> {
             customerServiceImpl.findCustomer(rut);
         });
 
-        String expectedMessage = "Invalid control character, control character must be a numbers or character K";
+        String expectedMessage = "Invalid check character, check character must be a numbers or character K";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
@@ -91,7 +91,7 @@ public class CustomerServiceImplTest {
             customerServiceImpl.findCustomer(rut);
         });
 
-        String expectedMessage = "Control digit not corresponds to sequence of numbers";
+        String expectedMessage = "Check digit does not corresponds to the sequence of numbers";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));

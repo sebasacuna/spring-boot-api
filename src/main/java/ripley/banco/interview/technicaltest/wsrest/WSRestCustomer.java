@@ -38,7 +38,7 @@ public class WSRestCustomer {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message =
                     "- Rut sequence must be only digits \t\n" +
-                            "- Invalid control character, control character must be a numbers or character K \t\n" +
+                            "Invalid check character, check character must be a numbers or character K" +
                             "- Check digit does not corresponds to the sequence of numbers  \t\n", response = ApiError.class),
             @ApiResponse(code = 404, message = "Customer not exist", response = ApiError.class)
     })
