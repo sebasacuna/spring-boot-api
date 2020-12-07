@@ -1,17 +1,21 @@
 package ripley.banco.interview.technicaltest.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ArrayConverts {
 
-    public static LinkedList stringToLinkedList(String string){
-        LinkedList<String> linkedList = new LinkedList<>(Arrays.asList(string.split("")));
-        return linkedList;
+    private ArrayConverts() {
     }
 
-    public static ArrayList stringToArrayList(String string){
-        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(string.split("")));
-        return arrayList;
+    public static LinkedList stringToLinkedList(String string) {
+        return new LinkedList<>(Arrays.asList(string.split("")));
+    }
+
+    public static List stringToArrayList(String string) {
+        return new ArrayList<>(Arrays.asList(string.split("")));
     }
 
 }

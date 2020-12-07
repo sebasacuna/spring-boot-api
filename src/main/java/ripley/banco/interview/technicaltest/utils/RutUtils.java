@@ -3,8 +3,8 @@ package ripley.banco.interview.technicaltest.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ripley.banco.interview.technicaltest.exceptions.ControlCharacterContainLetterException;
-import ripley.banco.interview.technicaltest.exceptions.NotValidControlDigitException;
+import ripley.banco.interview.technicaltest.exceptions.ForbiddenCheckCharacterException;
+import ripley.banco.interview.technicaltest.exceptions.NotValidCheckDigitException;
 import ripley.banco.interview.technicaltest.exceptions.RutAreNotDigitsException;
 
 import java.util.LinkedList;
@@ -15,40 +15,42 @@ public class RutUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RutUtils.class);
 
-    private final static int[] checkFactors = {2, 3, 4, 5, 6, 7};
-    private final static double[] test = {6, 9, 1, 7, 0, 1, 0, 0};
+    private static final int[] checkFactors = {2, 3, 4, 5, 6, 7};
 
-    public static boolean isValidRut(String rut) throws NotValidControlDigitException,
-            ControlCharacterContainLetterException, RutAreNotDigitsException {
+    private RutUtils() {
+    }
 
-        if (!checkSequenceNumber(rut)) {
+    public static boolean isValidRut(String rut) throws NotValidCheckDigitException,
+            ForbiddenCheckCharacterException, RutAreNotDigitsException {
+
+        if (!checkSequenceNumberHaveOnlyDigits(rut)) {
             logger.error("Sequence number must contain only digits");
             throw new RutAreNotDigitsException();
         }
-        if (!checkControlDigit(rut)) {
-            logger.error("Control digit must contain only digits or k");
-            throw new ControlCharacterContainLetterException();
+        if (!checkValidCheckDigit(rut)) {
+            logger.error("Check digit must contain only digits or k");
+            throw new ForbiddenCheckCharacterException();
         }
         if (!verifyControlDigitModule11(rut)) {
-            logger.error("Character control does not correspond to sequence of numbers");
-            throw new NotValidControlDigitException();
+            logger.error("Check digit does not correspond to sequence of numbers");
+            throw new NotValidCheckDigitException();
         }
 
         return false;
     }
 
-    private static boolean checkSequenceNumber(String rut) {
+    private static boolean checkSequenceNumberHaveOnlyDigits(String rut) {
         return StringUtils.chop(rut).chars().allMatch(Character::isDigit);
     }
 
-    private static boolean checkControlDigit(String rut) {
+    private static boolean checkValidCheckDigit(String rut) {
 
         LinkedList<String> sequenceRut = ArrayConverts.stringToLinkedList(rut);
-        String controlDigit = sequenceRut.getLast();
-        if(controlDigit.equals("K")){
+        String checkDigit = sequenceRut.getLast();
+        if (checkDigit.equals("K")) {
             return true;
         }
-        if (controlDigit.chars().allMatch(Character::isDigit)){
+        if (checkDigit.chars().allMatch(Character::isDigit)) {
             return true;
         }
         return false;
@@ -58,20 +60,20 @@ public class RutUtils {
         LinkedList<String> sequenceRut = ArrayConverts.stringToLinkedList(rut);
         String controlDigit = sequenceRut.getLast();
         double[] rutSequence = NumbersUtils.convertStringToPrimitiveDoubleArray(StringUtils.chop(rut));
-        String verifyControlDigit = getControlDigit(rutSequence);
+        String verifyCheckDigit = getCheckDigit(rutSequence);
 
-        return verifyControlDigit.equals(controlDigit);
+        return verifyCheckDigit.equals(controlDigit);
     }
 
     /**
-     * Module 11 algorithm: get control digit from an sequence of numbers
+     * Module 11 algorithm: get check digit from an sequence of numbers
      *
      * @param rutSequence
      * @return
      */
-    public static String getControlDigit(final double[] rutSequence) {
+    public static String getCheckDigit(final double[] rutSequence) {
         double[] product = new double[rutSequence.length];
-        double sumOfProducts = 0;
+        double sumOfProducts;
 
         sumOfProducts = getSumOfProducts(rutSequence, product);
 
@@ -114,11 +116,6 @@ public class RutUtils {
             default:
                 return String.valueOf(controlDigitWithOutDecimals);
         }
-    }
-
-    public static void main(String[] args) throws ControlCharacterContainLetterException, NotValidControlDigitException, RutAreNotDigitsException {
-        String rut = "69170100K";
-        isValidRut(rut);
     }
 
 }

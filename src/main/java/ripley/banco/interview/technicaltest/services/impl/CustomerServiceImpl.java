@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ripley.banco.interview.technicaltest.dtos.Customer;
-import ripley.banco.interview.technicaltest.exceptions.*;
+import ripley.banco.interview.technicaltest.exceptions.CustomerNotFoundException;
+import ripley.banco.interview.technicaltest.exceptions.ForbiddenCheckCharacterException;
+import ripley.banco.interview.technicaltest.exceptions.NotValidCheckDigitException;
+import ripley.banco.interview.technicaltest.exceptions.RutAreNotDigitsException;
 import ripley.banco.interview.technicaltest.services.CustomerService;
 import ripley.banco.interview.technicaltest.services.MockDataService;
 import ripley.banco.interview.technicaltest.utils.RutUtils;
@@ -32,7 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findCustomer(String rut) throws CustomerNotFoundException,
-            NotValidControlDigitException, ControlCharacterContainLetterException, RutAreNotDigitsException {
+            NotValidCheckDigitException, ForbiddenCheckCharacterException, RutAreNotDigitsException {
 
         RutUtils.isValidRut(rut.toUpperCase());
 
@@ -43,10 +46,11 @@ public class CustomerServiceImpl implements CustomerService {
                 .findFirst();
 
         if (customerToFind.isPresent()) {
-            logger.info("customer found, info customer: "+customerToFind.get().toString());
+            String customerInfo = customerToFind.get().toString();
+            logger.info("customer found, info customer: {}", customerInfo);
             return customerToFind.get();
         } else {
-            logger.error("Customer not exist");
+            logger.error("Customer not exist, looking for rut {}", rut);
             throw new CustomerNotFoundException();
         }
 

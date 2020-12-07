@@ -7,7 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ripley.banco.interview.technicaltest.exceptions.*;
+import ripley.banco.interview.technicaltest.exceptions.CustomerNotFoundException;
+import ripley.banco.interview.technicaltest.exceptions.ForbiddenCheckCharacterException;
+import ripley.banco.interview.technicaltest.exceptions.NotValidCheckDigitException;
+import ripley.banco.interview.technicaltest.exceptions.RutAreNotDigitsException;
 import ripley.banco.interview.technicaltest.utils.DateUtils;
 
 import java.time.LocalDateTime;
@@ -20,10 +23,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle customerNotFoundException from services
      *
      * @param customerNotFoundException
-     * @return
+     * @return ApiError
      */
     @ExceptionHandler(CustomerNotFoundException.class)
-    protected ResponseEntity<Object> CustomerNotFoundException(
+    protected ResponseEntity<ApiError> customerNotFoundException(
             CustomerNotFoundException customerNotFoundException) {
         ApiError apiError = ApiError.builder()
                 .message(customerNotFoundException.getMessage())
@@ -39,14 +42,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle exception from services
      *
      * @param exception
-     * @return
+     * @return ApiError
      */
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleException(
+    protected ResponseEntity<ApiError> handleException(
             CustomerNotFoundException exception) {
         ApiError apiError = ApiError.builder()
                 .message(exception.getMessage())
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .timestamp(DateUtils.localDateTimeToFormatDate(LocalDateTime.now()))
                 .build();
 
@@ -57,10 +60,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle RutAreNotDigitsException from services
      *
      * @param rutAreNotDigitsException
-     * @return
+     * @return ApiError
      */
     @ExceptionHandler(RutAreNotDigitsException.class)
-    protected ResponseEntity<Object> handleControlDigitContainLetterException(
+    protected ResponseEntity<ApiError> handleControlDigitContainLetterException(
             RutAreNotDigitsException rutAreNotDigitsException) {
         ApiError apiError = ApiError.builder()
                 .message(rutAreNotDigitsException.getMessage())
@@ -75,11 +78,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle ControlDigitContainLetterException from services
      *
      * @param controlDigitContainLetterException
-     * @return
+     * @return ApiError
      */
-    @ExceptionHandler(ControlCharacterContainLetterException.class)
-    protected ResponseEntity<Object> handleControlDigitContainLetterException(
-            ControlCharacterContainLetterException controlDigitContainLetterException) {
+    @ExceptionHandler(ForbiddenCheckCharacterException.class)
+    protected ResponseEntity<ApiError> handleControlDigitContainLetterException(
+            ForbiddenCheckCharacterException controlDigitContainLetterException) {
         ApiError apiError = ApiError.builder()
                 .message(controlDigitContainLetterException.getMessage())
                 .status(HttpStatus.BAD_REQUEST)
@@ -93,11 +96,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Handle NotValidControlDigitException from services
      *
      * @param notValidControlDigitException
-     * @return
+     * @return ApiError
      */
-    @ExceptionHandler(NotValidControlDigitException.class)
-    protected ResponseEntity<Object> handleNotValidControlDigitException(
-            NotValidControlDigitException notValidControlDigitException) {
+    @ExceptionHandler(NotValidCheckDigitException.class)
+    protected ResponseEntity<ApiError> handleNotValidControlDigitException(
+            NotValidCheckDigitException notValidControlDigitException) {
         ApiError apiError = ApiError.builder()
                 .message(notValidControlDigitException.getMessage())
                 .status(HttpStatus.BAD_REQUEST)
@@ -111,12 +114,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * Builder class to create ResponseEntity with apiError Object
      *
      * @param apiError
-     * @return
+     * @return ApiError
      */
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
+    private ResponseEntity<ApiError> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
-
 
 
 }

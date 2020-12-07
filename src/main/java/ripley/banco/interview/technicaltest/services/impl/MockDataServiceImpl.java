@@ -13,6 +13,20 @@ public class MockDataServiceImpl implements MockDataService {
 
     public List<Customer> getCustomerTestData() {
 
+        Customer carlos = Customer.builder()
+                .name("Carlos")
+                .rut("235564785")
+                .lastName("Ruiz").
+                        birthdate(LocalDate.now().toString()).
+                        build();
+
+        Customer jose = Customer.builder()
+                .name("Jose")
+                .rut("51310977")
+                .lastName("Echeverria").
+                        birthdate(LocalDate.now().toString()).
+                        build();
+
         Customer sebastian = Customer.builder()
                 .name("Sebastian")
                 .rut("173459629")
@@ -20,29 +34,15 @@ public class MockDataServiceImpl implements MockDataService {
                         birthdate(LocalDate.now().toString()).
                         build();
 
-        Customer carlos = Customer.builder()
-                .name("Carlos")
-                .rut("123456456")
-                .lastName("Ruiz").
-                        birthdate(LocalDate.now().toString()).
-                        build();
-
-        Customer jose = Customer.builder()
-                .name("Jose")
-                .rut("789878456")
-                .lastName("Echeverria").
-                        birthdate(LocalDate.now().toString()).
-                        build();
-
         Customer cristian = Customer.builder()
                 .name("Cristian")
-                .rut("489565")
+                .rut("160184094")
                 .lastName("Gallardo").
                         birthdate(LocalDate.now().toString()).
                         build();
 
         return Arrays.asList(
-                sebastian, carlos, jose, cristian);
+                carlos, jose, sebastian, cristian);
     }
 
 
